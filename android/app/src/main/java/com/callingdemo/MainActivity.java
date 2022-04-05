@@ -12,6 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+    super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     PipAndroidModule.pipModeChanged(isInPictureInPictureMode);
   }
 

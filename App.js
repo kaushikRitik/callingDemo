@@ -6,63 +6,100 @@
  * @flow strict-local
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   AppState,
   BackHandler,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {usePipModeListener} from './usePipModuleListener';
 import PipHandler from './PipHandler';
-const Section = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
+import {CometChat} from '@cometchat-pro/react-native-chat';
+import {CometChatRTC} from '@cometchat-pro/react-native-calls';
 
-  return (
-    <View style={styles.sectionContainer}>
-      <TouchableOpacity
-        onPress={() => {
-          PipHandler.enterPipMode();
-        }}>
-        <Text>Enter into pip</Text>
-      </TouchableOpacity>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+let sessionID = 'test121';
+let audioOnly = false;
+let defaultLayout = true;
+
+let appID = '20640832b9d8393b';
+let region = 'us';
+var UID = 'SUPERHERO1';
+var authKey = '6d6864b63a5445cbe75ab5bf98cc905269c84e24';
 
 const App = () => {
+  const [callSettings, setCallSettings] = useState();
+  let appSetting = new CometChat.AppSettingsBuilder()
+    .subscribePresenceForAllUsers()
+    .setRegion(region)
+    .autoEstablishSocketConnection(true)
+    .build();
+
+  const callListener = new CometChat.OngoingCallListener({
+    onUserJoined: user => {
+      console.log('user joined:', user);
+    },
+    onUserLeft: user => {
+      console.log('user left:', user);
+    },
+    onUserListUpdated: userList => {
+      console.log('user list:', userList);
+    },
+    onCallEnded: call => {
+      console.log('Call ended:', call);
+    },
+    onError: error => {
+      console.log('Call Error: ', error);
+    },
+    onAudioModesUpdated: audioModes => {
+      console.log('audio modes:', audioModes);
+    },
+  });
+  const setCallSetting = () => {
+    let callSetting = new CometChat.CallSettingsBuilder()
+      .enableDefaultLayout(defaultLayout)
+      .setSessionID(sessionID)
+      .setIsAudioOnlyCall(audioOnly)
+      .setCallEventListener(callListener)
+      .build();
+    setCallSettings(callSetting);
+  };
+  useEffect(() => {
+    CometChat.init(appID, appSetting).then(
+      () => {
+        console.log('Initialization completed successfully');
+        CometChat.getLoggedinUser().then(
+          user => {
+            if (!user) {
+              CometChat.login(UID, authKey).then(
+                user => {
+                  console.log('Login Successful:', user);
+                  setCallSetting();
+                },
+                error => {
+                  console.log('Login failed with exception:', error);
+                },
+              );
+            } else {
+              setCallSetting();
+            }
+          },
+          error => {
+            console.log('Something went wrong', error);
+          },
+        );
+      },
+      error => {
+        console.log('Initialization failed with error:', error);
+      },
+    );
+  }, []);
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -72,8 +109,8 @@ const App = () => {
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', status => {
-      console.log('hardwareBackPress status', status);
       PipHandler.enterPipMode();
+      CometChatRTC.enterPIPMode();
     });
     return () => {
       BackHandler.removeEventListener('hardwareBackPress');
@@ -84,54 +121,35 @@ const App = () => {
     AppState.addEventListener('change', status => {
       if (status === 'background') {
         PipHandler.enterPipMode();
+        CometChatRTC.enterPIPMode();
       }
-      console.log('state change status', status);
+      if (status === 'active') {
+        CometChatRTC.exitPIPMode();
+      }
     });
     return AppState.addEventListener('change').remove();
   }, []);
+
   useEffect(() => {
-    console.log('is in pip mode', inPipMode);
     PipHandler.onPipModeChanged(mode => {
       console.log('in mode', mode);
     });
   }, [inPipMode]);
 
-  if (inPipMode) {
-    console.log('In if');
-    return (
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text>PIP Mode</Text>
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+
+      <View
+        style={{
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        }}>
+        <View style={{height: '100%', width: '100%', position: 'relative'}}>
+          {callSettings && (
+            <CometChat.CallingComponent callsettings={callSettings} />
+          )}
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
