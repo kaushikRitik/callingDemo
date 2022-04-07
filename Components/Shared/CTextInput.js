@@ -16,12 +16,14 @@ export default function CTextInput({
         control={control}
         rules={rules}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          </View>
         )}
         name={name}
       />
@@ -31,16 +33,16 @@ export default function CTextInput({
 }
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    marginTop: 5,
-    borderWidth: 0.2,
+    marginTop: 2,
+    borderWidth: 0.1,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 2,
   },
   container: {
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    padding: 5,
+    marginBottom: 5,
   },
+
   text: {
     fontSize: 12,
     fontWeight: '600',

@@ -1,5 +1,5 @@
 import {
-  Button,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import CCheckBox from '../Components/Shared/CCheckBox';
-import CTextInput from '../Components/Shared/CTextInput';
-import {useForm} from 'react-hook-form';
 import CRadioButton from '../Components/Shared/CRadioButton';
+import downArrow from '../assets/down-arrow.png';
+import rightArrow from '../assets/right-arrow.png';
+import BottomButton from '../Components/Shared/BottomButton';
 
 const CallingSettingsScreen = ({navigation, route}) => {
-  console.log('route', route.params.data);
   const [isSingleMode, setIsSingleMode] = useState(false);
   const [isAudioOnlyCall, setIsAudioOnlyCall] = useState(false);
   const [showMuteAudioButton, setShowMuteAudioButton] = useState(true);
@@ -32,10 +32,16 @@ const CallingSettingsScreen = ({navigation, route}) => {
   const [startRecordingOnCallStart, setStartRecordingOnCallStart] =
     useState(false);
   const [sessionID, setSessionID] = useState('');
+  const [isAdditionalSetting, setIsAdditionalSetting] = useState(false);
 
   const [mode, setMode] = useState('default');
+  const [sessionIDError, setSessionIDError] = useState(false);
 
   const onSubmit = () => {
+    if (sessionID === '' || !sessionID) {
+      setSessionIDError(true);
+      return;
+    }
     navigation.navigate('CallingScreen', {
       data: {
         ...route.params.data,
@@ -60,144 +66,176 @@ const CallingSettingsScreen = ({navigation, route}) => {
   };
 
   return (
-    <View>
-      <ScrollView>
-        <Text style={styles.text}>Session ID</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setSessionID(text)}
-          value={sessionID}
-        />
-        <Text style={styles.title}>Call Settings</Text>
-        <CCheckBox
-          ischecked={enableDefaultLayout}
-          onStatusChanges={e => {
-            setEnableDefaultLayout(e);
-          }}
-          label={'EnableDefaultLayout'}
-        />
-        <CCheckBox
-          ischecked={isSingleMode}
-          onStatusChanges={e => {
-            setIsSingleMode(e);
-          }}
-          label={'IsSingleMode'}
-        />
-        <CCheckBox
-          ischecked={isAudioOnlyCall}
-          onStatusChanges={e => {
-            setIsAudioOnlyCall(e);
-          }}
-          label={'IsAudioOnly'}
-        />
-        <CCheckBox
-          ischecked={showMuteAudioButton}
-          onStatusChanges={e => {
-            setShowMuteAudioButton(e);
-          }}
-          label={'ShowMuteAudioButton'}
-        />
-        <CCheckBox
-          ischecked={showSwitchToVideoCallButton}
-          onStatusChanges={e => {
-            setShowSwitchToVideoCallButton(e);
-          }}
-          label={'ShowSwitchToVideoCallButton'}
-        />
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Call Settings</Text>
 
-        <CCheckBox
-          ischecked={showEndCallButton}
-          onStatusChanges={e => {
-            setShowEndCallButton(e);
-          }}
-          label={'ShowEndCallButton'}
-        />
-        <CCheckBox
-          ischecked={showPauseVideoButton}
-          onStatusChanges={e => {
-            setShowPauseVideoButton(e);
-          }}
-          label={'ShowPauseVideoButton'}
-        />
-        <CCheckBox
-          ischecked={showSwitchCameraButton}
-          onStatusChanges={e => {
-            setShowSwitchCameraButton(e);
-          }}
-          label={'showSwitchCameraButton'}
-        />
-        <CCheckBox
-          ischecked={hideVideoSwitchButton}
-          onStatusChanges={e => {
-            setHideVideoSwitchButton(e);
-          }}
-          label={'HideVideoSwitchButton'}
-        />
-        <CCheckBox
-          ischecked={showAudioModeButton}
-          onStatusChanges={e => {
-            setShowAudioModeButton(e);
-          }}
-          label={'ShowAudioModeButton'}
-        />
-        <CCheckBox
-          ischecked={showCallRecordingButton}
-          onStatusChanges={e => {
-            setShowCallRecordingButton(e);
-          }}
-          label={'ShowCallRecordingButton'}
-        />
+      <Text style={styles.text}>Session ID</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => {
+          if (sessionIDError) setSessionIDError(false);
+          setSessionID(text?.toLocaleLowerCase());
+        }}
+        value={sessionID}
+      />
+      {sessionIDError && (
+        <Text style={{color: 'crimson', fontSize: 12}}>This is Required</Text>
+      )}
+      <View style={styles.additionalSettingContainer}>
+        <TouchableOpacity
+          style={styles.additionalSettingHeader}
+          onPress={() => {
+            setIsAdditionalSetting(prev => !prev);
+          }}>
+          <Text style={styles.title2}>Additional Settings</Text>
+          {isAdditionalSetting ? (
+            <Image source={downArrow} style={styles.arrowIcon} />
+          ) : (
+            <Image source={rightArrow} style={styles.arrowIcon} />
+          )}
+        </TouchableOpacity>
+        {isAdditionalSetting && (
+          <View style={{marginTop: 10}}>
+            <CCheckBox
+              ischecked={enableDefaultLayout}
+              onStatusChanges={e => {
+                setEnableDefaultLayout(e);
+              }}
+              label={'EnableDefaultLayout'}
+            />
+            <CCheckBox
+              ischecked={isSingleMode}
+              onStatusChanges={e => {
+                setIsSingleMode(e);
+              }}
+              label={'IsSingleMode'}
+            />
+            <CCheckBox
+              ischecked={isAudioOnlyCall}
+              onStatusChanges={e => {
+                setIsAudioOnlyCall(e);
+              }}
+              label={'IsAudioOnly'}
+            />
+            <CCheckBox
+              ischecked={showMuteAudioButton}
+              onStatusChanges={e => {
+                setShowMuteAudioButton(e);
+              }}
+              label={'ShowMuteAudioButton'}
+            />
+            <CCheckBox
+              ischecked={showSwitchToVideoCallButton}
+              onStatusChanges={e => {
+                setShowSwitchToVideoCallButton(e);
+              }}
+              label={'ShowSwitchToVideoCallButton'}
+            />
 
-        <CCheckBox
-          ischecked={startRecordingOnCallStart}
-          onStatusChanges={e => {
-            setStartRecordingOnCallStart(e);
-          }}
-          label={'StartRecordingOnCallStart'}
-        />
+            <CCheckBox
+              ischecked={showEndCallButton}
+              onStatusChanges={e => {
+                setShowEndCallButton(e);
+              }}
+              label={'ShowEndCallButton'}
+            />
+            <CCheckBox
+              ischecked={showPauseVideoButton}
+              onStatusChanges={e => {
+                setShowPauseVideoButton(e);
+              }}
+              label={'ShowPauseVideoButton'}
+            />
+            <CCheckBox
+              ischecked={showSwitchCameraButton}
+              onStatusChanges={e => {
+                setShowSwitchCameraButton(e);
+              }}
+              label={'showSwitchCameraButton'}
+            />
+            <CCheckBox
+              ischecked={hideVideoSwitchButton}
+              onStatusChanges={e => {
+                setHideVideoSwitchButton(e);
+              }}
+              label={'HideVideoSwitchButton'}
+            />
+            <CCheckBox
+              ischecked={showAudioModeButton}
+              onStatusChanges={e => {
+                setShowAudioModeButton(e);
+              }}
+              label={'ShowAudioModeButton'}
+            />
+            <CCheckBox
+              ischecked={showCallRecordingButton}
+              onStatusChanges={e => {
+                setShowCallRecordingButton(e);
+              }}
+              label={'ShowCallRecordingButton'}
+            />
 
-        <CCheckBox
-          ischecked={startWithAudioMuted}
-          onStatusChanges={e => {
-            setStartWithAudioMuted(e);
-          }}
-          label={'StartWithAudioMuted'}
-        />
+            <CCheckBox
+              ischecked={startRecordingOnCallStart}
+              onStatusChanges={e => {
+                setStartRecordingOnCallStart(e);
+              }}
+              label={'StartRecordingOnCallStart'}
+            />
 
-        <CCheckBox
-          ischecked={startWithVideoMuted}
-          onStatusChanges={e => {
-            setStartWithVideoMuted(e);
-          }}
-          label={'StartWithVideoMuted'}
-        />
-        <Text style={styles.label}>Mode</Text>
-        <View>
-          <CRadioButton
-            isChecked={mode === 'default'}
-            label={'Default'}
-            onStatusChanges={e => {
-              setMode(e ? 'default' : 'SPOTLIGHT');
-            }}
-          />
-          <CRadioButton
-            isChecked={mode === 'SPOTLIGHT'}
-            label={'Spotlight'}
-            onStatusChanges={e => {
-              setMode(e ? 'SPOTLIGHT' : 'default');
-            }}
-          />
-        </View>
-        <Button title="Submit" onPress={onSubmit} />
-      </ScrollView>
-    </View>
+            <CCheckBox
+              ischecked={startWithAudioMuted}
+              onStatusChanges={e => {
+                setStartWithAudioMuted(e);
+              }}
+              label={'StartWithAudioMuted'}
+            />
+
+            <CCheckBox
+              ischecked={startWithVideoMuted}
+              onStatusChanges={e => {
+                setStartWithVideoMuted(e);
+              }}
+              label={'StartWithVideoMuted'}
+            />
+            <Text style={styles.title2}>Mode</Text>
+            <View>
+              <CRadioButton
+                isChecked={mode === 'default'}
+                label={'Default'}
+                onStatusChanges={e => {
+                  setMode(e ? 'default' : 'SPOTLIGHT');
+                }}
+              />
+              <CRadioButton
+                isChecked={mode === 'SPOTLIGHT'}
+                label={'Spotlight'}
+                onStatusChanges={e => {
+                  setMode(e ? 'SPOTLIGHT' : 'default');
+                }}
+              />
+            </View>
+          </View>
+        )}
+      </View>
+      <BottomButton
+        customStyle={{position: 'relative', marginTop: 18, marginBottom: 25}}
+        label={'Submit'}
+        onPress={onSubmit}
+      />
+    </ScrollView>
   );
 };
 
 export default CallingSettingsScreen;
 
 const styles = StyleSheet.create({
-  title: {fontSize: 14, fontWeight: '500', margin: 10},
+  title: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 5,
+  },
   label: {fontSize: 18, marginLeft: 10},
   input: {
     height: 40,
@@ -206,4 +244,24 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
+  container: {
+    paddingTop: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+  },
+  additionalSettingContainer: {
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 4,
+    borderWidth: 0.2,
+    paddingVertical: 10,
+  },
+  title2: {fontSize: 15},
+  additionalSettingHeader: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  arrowIcon: {height: 25, width: 25, marginRight: 5},
 });

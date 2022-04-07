@@ -15,10 +15,7 @@ import PipHandler from '../PipHandler';
 import {CometChat} from '@cometchat-pro/react-native-chat';
 import {CometChatRTC} from '@cometchat-pro/react-native-calls';
 
-const CallingScreen = ({route}) => {
-  console.log('route, callingScreen', route.params.data);
-  // const [callSettings, setCallSettings] = useState();
-  // useEffect(() => {
+const CallingScreen = ({navigation, route}) => {
   let params = route.params.data;
   let callSettings = new CometChat.CallSettingsBuilder()
     .enableDefaultLayout(params?.enableDefaultLayout)
@@ -34,8 +31,6 @@ const CallingScreen = ({route}) => {
     .startWithVideoMuted(params.startWithVideoMuted)
     .setCallEventListener(callListener)
     .build();
-  //   setCallSettings(callSetting);
-  // }, []);
 
   const callListener = new CometChat.OngoingCallListener({
     onUserJoined: user => {
@@ -68,6 +63,7 @@ const CallingScreen = ({route}) => {
   useEffect(() => {
     AppState.addEventListener('change', status => {
       if (status === 'background') {
+        if (!navigation.isFocused()) return;
         PipHandler.enterPipMode();
         CometChatRTC.enterPIPMode();
       }
@@ -75,7 +71,6 @@ const CallingScreen = ({route}) => {
         CometChatRTC.exitPIPMode();
       }
     });
-    return AppState.addEventListener('change').remove();
   }, []);
 
   useEffect(() => {

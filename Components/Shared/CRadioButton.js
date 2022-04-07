@@ -1,12 +1,5 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import Checked from '../../assets/checked_radio.png';
 import UnChecked from '../../assets/unchecked_radio.png';
 const CRadioButton = ({
@@ -14,12 +7,8 @@ const CRadioButton = ({
   onStatusChanges = () => null,
   label,
 }) => {
-  //   const [isChecked, setIsChecked] = useState(ischecked);
   const onPressed = () => {
-    // setIsChecked(prev => {
     onStatusChanges(!isChecked);
-    //   return !prev;
-    // });
   };
   return (
     <TouchableOpacity onPress={onPressed} style={styles.container}>
@@ -44,6 +33,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 5,
   },
-  icon: {height: 20, width: 20},
+  icon: {height: 25, width: 30},
   label: {fontSize: 18, marginLeft: 10},
 });

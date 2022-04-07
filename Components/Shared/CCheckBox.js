@@ -14,17 +14,13 @@ const CCheckBox = ({
   onStatusChanges = () => null,
   label,
 }) => {
-  const [isChecked, setIsChecked] = useState(ischecked);
   const onPressed = () => {
-    setIsChecked(prev => {
-      onStatusChanges(!prev);
-      return !prev;
-    });
+    onStatusChanges(!ischecked);
   };
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPressed}>
-        {isChecked ? (
+        {ischecked ? (
           <Image source={Checked} style={styles.icon} />
         ) : (
           <Image source={UnChecked} style={styles.icon} />

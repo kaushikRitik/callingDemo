@@ -1,15 +1,9 @@
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
 import CTextInput from '../Components/Shared/CTextInput';
 import {useForm} from 'react-hook-form';
 import {CometChat} from '@cometchat-pro/react-native-chat';
+import BottomButton from '../Components/Shared/BottomButton';
 
 const HomeScreen = ({navigation}) => {
   const {
@@ -50,7 +44,9 @@ const HomeScreen = ({navigation}) => {
     );
   };
   return (
-    <View>
+    <View style={styles.container}>
+      <Text style={styles.title}>App Settings</Text>
+
       <CTextInput
         style={styles.input}
         control={control}
@@ -94,8 +90,7 @@ const HomeScreen = ({navigation}) => {
         name={'uid'}
         errors={errors}
       />
-
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <BottomButton onPress={handleSubmit(onSubmit)} label={'Submit'} />
     </View>
   );
 };
@@ -103,10 +98,16 @@ const HomeScreen = ({navigation}) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  container: {
+    flex: 1,
+    paddingTop: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 5,
   },
 });
