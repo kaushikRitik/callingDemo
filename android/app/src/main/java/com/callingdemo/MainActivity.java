@@ -1,5 +1,5 @@
 package com.callingdemo;
-
+import android.os.Bundle;
 import com.reactnativepipandroid.PipAndroidModule;
 import com.facebook.react.ReactActivity;
 
@@ -20,5 +20,8 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "callingDemo";
   }
-
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
+  }
 }
