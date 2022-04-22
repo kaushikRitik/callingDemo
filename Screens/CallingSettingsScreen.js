@@ -35,6 +35,7 @@ const CallingSettingsScreen = ({navigation, route}) => {
   const [isAdditionalSetting, setIsAdditionalSetting] = useState(false);
 
   const [mode, setMode] = useState('default');
+  const [avatarMode, setAvatarMode] = useState('default');
   const [sessionIDError, setSessionIDError] = useState(false);
 
   const onSubmit = () => {
@@ -60,7 +61,8 @@ const CallingSettingsScreen = ({navigation, route}) => {
         isAudioOnlyCall,
         isSingleMode,
         mode,
-        sessionID,
+        sessionID: sessionID?.toLocaleLowerCase(),
+        avatarMode,
       },
     });
   };
@@ -74,7 +76,7 @@ const CallingSettingsScreen = ({navigation, route}) => {
         style={styles.input}
         onChangeText={text => {
           if (sessionIDError) setSessionIDError(false);
-          setSessionID(text?.toLocaleLowerCase());
+          setSessionID(text);
         }}
         value={sessionID}
       />
@@ -212,6 +214,30 @@ const CallingSettingsScreen = ({navigation, route}) => {
                 label={'Spotlight'}
                 onStatusChanges={e => {
                   setMode(e ? 'SPOTLIGHT' : 'default');
+                }}
+              />
+            </View>
+            <Text style={styles.title2}>Avatar Mode</Text>
+            <View>
+              <CRadioButton
+                isChecked={avatarMode === 'default'}
+                label={'Default'}
+                onStatusChanges={e => {
+                  if (e) setAvatarMode('default');
+                }}
+              />
+              <CRadioButton
+                isChecked={avatarMode === 'square'}
+                label={'Square'}
+                onStatusChanges={e => {
+                  if (e) setAvatarMode('square');
+                }}
+              />
+              <CRadioButton
+                isChecked={avatarMode === 'fullscreen'}
+                label={'FullScreen'}
+                onStatusChanges={e => {
+                  if (e) setAvatarMode('fullscreen');
                 }}
               />
             </View>

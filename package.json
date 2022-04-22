@@ -10,12 +10,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@cometchat-pro/react-native-calls": "2.1.2-beta13",
-    "@cometchat-pro/react-native-chat": "^3.0.6",
+    "@cometchat-pro/react-native-calls": "https://github.com/cometchat-team/cometchat-pro-call-react-native.git#CPE-5872",
+    "@cometchat-pro/react-native-chat": "3.0.6",
     "@react-native-async-storage/async-storage": "^1.17.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.1",
-    "i": "^0.3.7",
+    "jsc-android": "^250230.2.1",
     "npm": "^8.6.0",
     "react": "17.0.2",
     "react-hook-form": "^7.29.0",

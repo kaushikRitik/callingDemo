@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {usePipModeListener} from '../usePipModuleListener';
-import PipHandler from '../PipHandler';
+// import {usePipModeListener} from '../usePipModuleListener';
+// import PipHandler from '../PipHandler';
 import {CometChat} from '@cometchat-pro/react-native-chat';
 import {CometChatRTC} from '@cometchat-pro/react-native-calls';
+
+// import {CallSettingsBuilder} from '@cometchat-pro/react-native-calls/CallSettings';
 
 const CallingScreen = ({navigation, route}) => {
   let params = route.params.data;
@@ -28,7 +30,9 @@ const CallingScreen = ({navigation, route}) => {
     .showPauseVideoButton(params.showPauseVideoButton)
     .showSwitchCameraButton(params.showSwitchCameraButton)
     .startWithAudioMuted(params.startWithAudioMuted)
+    .showRecordingButton(true)
     .startWithVideoMuted(params.startWithVideoMuted)
+    .setAvatarMode(params.avatarMode)
     .setCallEventListener(callListener)
     .build();
 
@@ -58,26 +62,26 @@ const CallingScreen = ({navigation, route}) => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const inPipMode = usePipModeListener();
+  // const inPipMode = usePipModeListener();
 
-  useEffect(() => {
-    AppState.addEventListener('change', status => {
-      if (status === 'background') {
-        if (!navigation.isFocused()) return;
-        PipHandler.enterPipMode();
-        CometChatRTC.enterPIPMode();
-      }
-      if (status === 'active') {
-        CometChatRTC.exitPIPMode();
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   AppState.addEventListener('change', status => {
+  //     if (status === 'background') {
+  //       if (!navigation.isFocused()) return;
+  //       PipHandler.enterPipMode();
+  //       CometChatRTC.enterPIPMode();
+  //     }
+  //     if (status === 'active') {
+  //       CometChatRTC.exitPIPMode();
+  //     }
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    PipHandler.onPipModeChanged(mode => {
-      console.log('in mode', mode);
-    });
-  }, [inPipMode]);
+  // useEffect(() => {
+  //   PipHandler.onPipModeChanged(mode => {
+  //     console.log('in mode', mode);
+  //   });
+  // }, [inPipMode]);
 
   return (
     <SafeAreaView style={backgroundStyle}>
